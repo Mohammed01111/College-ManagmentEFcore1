@@ -11,14 +11,15 @@ namespace College_ManagmentEFcore.Models
     public class Subject
     {
         [Key]
-        public int Subject_Id { get; set; }
+        public int Id { get; set; }
 
         [Required]
-        public string Subject_Name { get; set; }
+        public string Title { get; set; }
 
-        [ForeignKey("Teacher")]
-        public int Teacher_Id { get; set; }
-        public virtual Faculty Teacher { get; set; }
+        [ForeignKey("Faculty")]
+        public int FacultyId { get; set; }
+
+        public virtual Faculty Faculty { get; set; }
     }
 }
 

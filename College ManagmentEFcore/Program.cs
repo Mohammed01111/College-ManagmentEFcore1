@@ -83,11 +83,12 @@ namespace College_ManagmentEFcore
                         Console.WriteLine("Invalid choice. Please try again.");
                         break;
                 }
+                Console.ReadLine();
             }
         }
         static void DisplayAllStudents(StudentRepository repository)
         {
-            var students = repository.GetStudentByIdAsync();
+            var students = repository.GetAllStudents();
             Console.WriteLine("\nStudents:");
             foreach (var student in students)
             {
@@ -101,12 +102,12 @@ namespace College_ManagmentEFcore
             Console.Write("Enter student age: ");
             var age = int.Parse(Console.ReadLine());
             Console.Write("Enter student phone: ");
-            var phone = Console.ReadLine();
+            string phone = Console.ReadLine();
             Console.Write("Enter department ID: ");
             var departmentId = int.Parse(Console.ReadLine());
             Console.Write("Enter hostel ID: ");
             var hostelId = int.Parse(Console.ReadLine());
-            var student = new Student { SName = name, Age = age, Phone = phone, DepartmentId = departmentId, HostelId = hostelId };
+            var student = new student { SName = name, Age = age, Phone = phone, DepartmentId = departmentId, HostelId = hostelId };
             repository.AddStudent(student);
             Console.WriteLine("Student added successfully!");
         }
@@ -127,7 +128,7 @@ namespace College_ManagmentEFcore
             var city = Console.ReadLine();
             Console.Write("Enter available seats: ");
             var availableSeats = int.Parse(Console.ReadLine());
-            var hostel = new Hostel { Name = name, City = city, AvailableSeats = availableSeats };
+            var hostel = new hostel { Name = name, City = city, AvailableSeats = availableSeats };
             repository.AddHostel(hostel);
             Console.WriteLine("Hostel added successfully!");
         }
@@ -179,14 +180,14 @@ namespace College_ManagmentEFcore
             Console.WriteLine("\nDepartments:");
             foreach (var department in departments)
             {
-                Console.WriteLine($"ID: {department.Id}, Name: {department.Name}");
+                Console.WriteLine($"ID: {department.Id}, Name: {department.DName}");
             }
         }
         static void AddNewDepartment(DepartmentRepository repository)
         {
             Console.Write("\nEnter department name: ");
             var name = Console.ReadLine();
-            var department = new Department { Name = name };
+            var department = new Department { DName = name };
             repository.AddDepartment(department);
             Console.WriteLine("Department added successfully!");
         }
@@ -213,12 +214,3 @@ namespace College_ManagmentEFcore
         }
     }
 }
-
-
-
-
-
-
-
-
-

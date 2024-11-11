@@ -9,25 +9,19 @@ using Microsoft.EntityFrameworkCore;
 
 namespace College_ManagmentEFcore.Models
 {
-    [PrimaryKey(nameof(Dept_Id), nameof(Exam_Code))]
+
     public class Exam
     {
-        internal object Students;
+        [Key]
+        public int Id { get; set; }
 
-        [ForeignKey("Department")]
-        public int Dept_Id { get; set; }
+        public string Title { get; set; }
+
+        public DateTime Date { get; set; }
+
+        public int DepartmentId { get; set; }
+
         public virtual Department Department { get; set; }
-
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Exam_Code { get; set; }
-
-        [Required]
-        public int Room { get; set; }
-
-        [Required]
-        public DateOnly Date { get; set; }
-
-        [Required]
-        public TimeOnly Time { get; set; }
+        public virtual ICollection<student> Students { get; set; }
     }
 }

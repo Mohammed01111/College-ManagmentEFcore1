@@ -13,15 +13,16 @@ namespace College_ManagmentEFcore.Models
     {
         public class StudentPhone
         {
-            [PrimaryKey(nameof(FID), nameof(Mobile_no))]
-            public class FacultyMobile
-            {
-                [ForeignKey("Faculty")]
-                public int FID { get; set; }
-                public virtual Faculty Faculty { get; set; }
+            [Key]
+            public int FacultyMobileId { get; set; }
 
-                public string Mobile_no { get; set; }
-            }
+            [ForeignKey("Faculty")]
+            public int FacultyId { get; set; }
+
+            public string MobileNumber { get; set; }
+
+
+            public virtual Faculty Faculty { get; set; }
         }
 
     }

@@ -10,16 +10,18 @@ namespace College_ManagmentEFcore.Models
     public class hostel
     {
         [Key]
-        public int? hostel_id { get; set; }
+        public int Id { get; set; }
 
         [Required]
-        public string hostel_name { get; set; }
+        public string Name { get; set; }
 
-        [Required]
-        public int no_of_seats { get; set; }
+        public string City { get; set; }
+        public int AvailableSeats { get; set; }
 
+        public virtual ICollection<student> Students
+        {
+            get; set;
 
-        public virtual ICollection<student> Students { get; set; }
-
+        }
     }
 }

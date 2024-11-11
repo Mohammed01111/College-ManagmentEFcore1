@@ -17,79 +17,64 @@ namespace College_ManagmentEFcore.Repositories
             _context = context;
         }
 
-        // 1. GetAllCourses: Retrieve all courses, including students enrolled and faculty handling the course.
-        public async Task<List<Course>> GetAllCoursesAsync()
+        public IEnumerable<Course> GetAllCourses()
         {
-            return await _context.Courses
-                .Include(c => c.StudentsInCourse) // Include students enrolled in the course
-                .Include(c => c.Department)       // Include the department offering the course
-                .ToListAsync();
+            return _context.Courses
+                .Include(c => c.Students)
+                .Include(c => c.Faculty)
+                .ToList();
         }
 
-        // 2. GetCourseById: Fetch course details by ID, with related students and faculties.
-        public async Task<Course> GetCourseByIdAsync(int courseId)
+        public Course GetCourseById(int id)
         {
-            return await _context.Courses
-                .Include(c => c.StudentsInCourse)  // Include students enrolled in the course
-                .Include(c => c.Department)        // Include the department offering the course
-                .FirstOrDefaultAsync(c => c.CourseID == courseId);
+            return _context.Courses
+                .Include(c => c.Students)
+                .Include(c => c.Faculty)
+                .FirstOrDefault(c => c.Id == id);
         }
 
-        // 3. AddCourse: Add a new course to the database.
-        public async Task AddCourseAsync(Course course)
+        public void AddCourse(Course course)
         {
             _context.Courses.Add(course);
-            await _context.SaveChangesAsync();
+            _context.SaveChanges();
         }
 
-        // 4. UpdateCourse: Update existing course details.
-        public async Task UpdateCourseAsync(Course course)
+        public void UpdateCourse(Course course)
         {
             _context.Courses.Update(course);
-            await _context.SaveChangesAsync();
+            _context.SaveChanges();
         }
 
-        // 5. DeleteCourse: Delete a course by ID.
-        public async Task DeleteCourseAsync(int courseId)
+        public void DeleteCourse(int id)
         {
-            var course = await _context.Courses
-                .Include(c => c.StudentsInCourse) // Include students in the course (if needed)
-                .Include(c => c.Department)       // Include department details (if needed)
-                .FirstOrDefaultAsync(c => c.CourseID == courseId);
-
+            var course = _context.Courses.Find(id);
             if (course != null)
             {
                 _context.Courses.Remove(course);
-                await _context.SaveChangesAsync();
+                _context.SaveChanges();
             }
         }
 
-        // 6. GetCoursesByDepartment: List courses offered by a specific department.
-        public async Task<List<Course>> GetCoursesByDepartmentAsync(int departmentId)
+        public IEnumerable<Course> GetCoursesByDepartment(int departmentId)
         {
-            return await _context.Courses
-                .Where(c => c.Dept_Id == departmentId)  // Filter courses by department ID
-                .Include(c => c.Department)              // Include department details
-                .ToListAsync();
+            return _context.Courses
+                .Where(c => c.DepartmentId == departmentId)
+                .ToList();
         }
 
-        // 7. GetCoursesWithDuration: Filter courses by their duration using LINQ.
-        public async Task<List<Course>> GetCoursesWithDurationAsync(decimal minDuration, decimal maxDuration)
+        public IEnumerable<Course> GetCoursesWithDuration(int duration)
         {
-            return await _context.Courses
-                .Where(c => c.Duration >= minDuration && c.Duration <= maxDuration)  // Filter by duration
-                .Include(c => c.Department)  // Optionally include department
-                .ToListAsync();
+            return _context.Courses
+                .Where(c => c.Duration == duration)
+                .ToList();
         }
 
-        // 8. PaginateCourses: Implement pagination to handle a large number of courses.
-        public async Task<List<Course>> PaginateCoursesAsync(int pageIndex, int pageSize)
+        public IEnumerable<Course> PaginateCourses(int pageNumber, int pageSize)
         {
-            return await _context.Courses
-                .Skip((pageIndex - 1) * pageSize)   // Skip the appropriate number of records for pagination
-                .Take(pageSize)                     // Take the specified number of records per page
-                .Include(c => c.Department)         // Optionally include department details
-                .ToListAsync();
+            return _context.Courses
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
         }
     }
 }

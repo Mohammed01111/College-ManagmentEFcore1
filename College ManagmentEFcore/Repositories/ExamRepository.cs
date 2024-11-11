@@ -17,86 +17,62 @@ namespace College_ManagmentEFcore.Repositories
             _context = context;
         }
 
-        // 1. GetAllExams: List all exams, including the department and students taking the exam.
-        public async Task<List<Exam>> GetAllExamsAsync()
+        public IEnumerable<Exam> GetAllExams()
         {
-            return await _context.Exams
-                .Include(e => e.Department)  // Include the department that is conducting the exam
-                .Include(e => e.Students)    // Include students who are taking the exam (assuming Students is a navigation property)
-                .ToListAsync();
+            return _context.Exams
+                .Include(e => e.Department)
+                .Include(e => e.Students)
+                .ToList();
         }
 
-        // 2. GetExamById: Fetch exam details by ID with navigational properties.
-        public async Task<Exam> GetExamByIdAsync(int examCode)
+        public Exam GetExamById(int id)
         {
-            return await _context.Exams
-                .Include(e => e.Department)  // Include the department conducting the exam
-                .Include(e => e.Students)    // Include the students who are taking the exam
-                .FirstOrDefaultAsync(e => e.Exam_Code == examCode);
+            return _context.Exams
+                .Include(e => e.Department)
+                .Include(e => e.Students)
+                .FirstOrDefault(e => e.Id == id);
         }
 
-        // 3. AddExam: Add a new exam.
-        public async Task AddExamAsync(Exam exam)
+        public void AddExam(Exam exam)
         {
             _context.Exams.Add(exam);
-            await _context.SaveChangesAsync();
+            _context.SaveChanges();
         }
 
-        // 4. UpdateExam: Modify the details of an existing exam.
-        public async Task UpdateExamAsync(Exam exam)
+        public void UpdateExam(Exam exam)
         {
             _context.Exams.Update(exam);
-            await _context.SaveChangesAsync();
+            _context.SaveChanges();
         }
 
-        // 5. DeleteExam: Delete an exam by ID.
-        public async Task DeleteExamAsync(int examCode)
+        public void DeleteExam(int id)
         {
-            var exam = await _context.Exams
-                .Include(e => e.Students) // Include students to handle relationships when deleting
-                .FirstOrDefaultAsync(e => e.Exam_Code == examCode);
-
+            var exam = _context.Exams.Find(id);
             if (exam != null)
             {
                 _context.Exams.Remove(exam);
-                await _context.SaveChangesAsync();
+                _context.SaveChanges();
             }
         }
 
-        // 6. GetExamsByDate: Filter exams by a specific date or date range using LINQ.
-        public async Task<List<Exam>> GetExamsByDateAsync(DateOnly startDate, DateOnly endDate)
+        public IEnumerable<Exam> GetExamsByDate(DateTime date)
         {
-            return await _context.Exams
-                .Where(e => e.Date >= startDate && e.Date <= endDate)  // Filter exams between start and end date
-                .Include(e => e.Department) // Include the department conducting the exam
-                .Include(e => e.Students)   // Include the students taking the exam
-                .ToListAsync();
+            return _context.Exams
+                .Where(e => e.Date.Date == date.Date)
+                .ToList();
         }
 
-        // 7. GetExamsByStudent: List exams taken by a specific student.
-        public async Task<List<Exam>> GetExamsByStudentAsync(int studentId)
+        public IEnumerable<Exam> GetExamsByStudent(int studentId)
         {
-            return _context.studentCourses.Where(st => st.SID == studentId)
-                                          .Include(c => c.Course)
-                                          .ThenInclude(d => d.Department)
-                                          .ThenInclude(e => e.Exams)
-                                          .SelectMany(st => st.Course.Department.Exams)
-                                          .ToList();
+            return _context.Exams
+                .Where(e => e.Students.Any(s => s.SID == studentId))
+                .ToList();
         }
-        //{
-        //    return await _context.Exams
-        //        .Where(e => e.Students.Any(s => s.StudentId == studentId))  // Find exams for this student
-        //        .Include(e => e.Department) // Include the department conducting the exam
-        //        .Include(e => e.Students)   // Include the students in the exam
-        //        .ToListAsync();
-        //}
 
-        // 8. CountExamsByDepartment: Count the number of exams conducted by a specific department.
-        public async Task<int> CountExamsByDepartmentAsync(int departmentId)
+        public int CountExamsByDepartment(int departmentId)
         {
-            return await _context.Exams
-                .Where(e => e.Dept_Id == departmentId) // Filter exams by department
-                .CountAsync();  // Count the exams in that department
+            return _context.Exams
+                .Count(e => e.DepartmentId == departmentId);
         }
     }
 }

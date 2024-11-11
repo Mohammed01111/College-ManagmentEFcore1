@@ -11,19 +11,16 @@ namespace College_ManagmentEFcore.Models
     public class Course
     {
         [Key]
-        public int CourseID { get; set; }
+        public int Id { get; set; }
+        public string Name { get; set; }
 
-        [Required]
-        public string CourseName { get; set; }
-
-        [Required]
-        [Range(1, 5)]
-        public decimal Duration { get; set; }
+        public int Duration { get; set; }
 
         [ForeignKey("Department")]
-        public int Dept_Id { get; set; }
-        public virtual Department Department { get; set; }
+        public int DepartmentId { get; set; }
 
-        public virtual ICollection<StudentCourse> StudentsInCourse { get; set; }
+        public virtual Department Department { get; set; }
+        public virtual ICollection<student> Students { get; set; }
+        public virtual ICollection<Faculty> Faculty { get; set; }
     }
 }

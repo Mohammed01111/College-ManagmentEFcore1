@@ -17,7 +17,7 @@ namespace College_ManagmentEFcore
         protected override void OnConfiguring(DbContextOptionsBuilder options)
         {
 
-            options.UseSqlServer(" Data Source=DESKTOP-VFQRVL8\\MSSQLSERVER02; Initial Catalog=OutsystemCompany; Integrated Security=true; TrustServerCertificate=True ");
+            options.UseSqlServer(" Data Source=DESKTOP-VFQRVL8\\MSSQLSERVER02; Initial Catalog=CollegeManagmentSysEFCORE; Integrated Security=true; TrustServerCertificate=True ");
         }
         public DbSet<Course> Courses { get; set; }
         public DbSet<Department> Departments { get; set; }
@@ -31,7 +31,7 @@ namespace College_ManagmentEFcore
         //public DbSet<studentphone> studentphones { get; set; }
         public DbSet<Subject> Subjects { get; set; }
 
-        public DbSet<StudentCourse> studentCourses { get; set; }
+   
     }
     
 }

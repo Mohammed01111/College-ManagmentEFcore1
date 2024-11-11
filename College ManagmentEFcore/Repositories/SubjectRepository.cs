@@ -17,63 +17,53 @@ namespace College_ManagmentEFcore.Repositories
             _context = context;
         }
 
-        // 1. GetAllSubjects: Retrieve all subjects and include the faculty members associated with each subject.
-        public async Task<List<Subject>> GetAllSubjectsAsync()
+        public IEnumerable<Subject> GetAllSubjects()
         {
-            return await _context.Subjects
-                .Include(s => s.Teacher)  // Include the teacher (faculty) associated with the subject
-                .ToListAsync();
+            return _context.Subjects
+                .Include(s => s.Faculty)
+                .ToList();
         }
 
-        // 2. GetSubjectById: Fetch a specific subject by ID with navigational properties.
-        public async Task<Subject> GetSubjectByIdAsync(int subjectId)
+        public Subject GetSubjectById(int id)
         {
-            return await _context.Subjects
-                .Include(s => s.Teacher)  // Include the teacher (faculty) associated with the subject
-                .FirstOrDefaultAsync(s => s.Subject_Id == subjectId);
+            return _context.Subjects
+                .Include(s => s.Faculty)
+                .FirstOrDefault(s => s.Id == id);
         }
 
-        // 3. AddSubject: Add a new subject to the database.
-        public async Task AddSubjectAsync(Subject subject)
+        public void AddSubject(Subject subject)
         {
             _context.Subjects.Add(subject);
-            await _context.SaveChangesAsync();
+            _context.SaveChanges();
         }
 
-        // 4. UpdateSubject: Update details of an existing subject.
-        public async Task UpdateSubjectAsync(Subject subject)
+        public void UpdateSubject(Subject subject)
         {
             _context.Subjects.Update(subject);
-            await _context.SaveChangesAsync();
+            _context.SaveChanges();
         }
 
-        // 5. DeleteSubject: Delete a subject by ID.
-        public async Task DeleteSubjectAsync(int subjectId)
+        public void DeleteSubject(int id)
         {
-            var subject = await _context.Subjects
-                .Include(s => s.Teacher)  // Optionally include the teacher information, in case you need it
-                .FirstOrDefaultAsync(s => s.Subject_Id == subjectId);
-
+            var subject = _context.Subjects.Find(id);
             if (subject != null)
             {
                 _context.Subjects.Remove(subject);
-                await _context.SaveChangesAsync();
+                _context.SaveChanges();
             }
         }
 
-        // 6. GetSubjectsTaughtByFaculty: List subjects taught by a specific faculty member using LINQ.
-        public async Task<List<Subject>> GetSubjectsTaughtByFacultyAsync(int facultyId)
+        public IEnumerable<Subject> GetSubjectsTaughtByFaculty(int facultyId)
         {
-            return await _context.Subjects
-                .Where(s => s.Teacher_Id == facultyId)  // Filter by faculty ID (teacher)
-                .Include(s => s.Teacher)  // Include the faculty details
-                .ToListAsync();
+            return _context.Subjects
+                .Where(s => s.FacultyId == facultyId)
+                .ToList();
         }
 
-        // 7. CountSubjects: Use LINQ to get the total number of subjects offered.
-        public async Task<int> CountSubjectsAsync()
+        public int CountSubjects()
         {
-            return await _context.Subjects.CountAsync();
+            return _context.Subjects.Count();
         }
     }
 }
+

@@ -11,23 +11,24 @@ namespace College_ManagmentEFcore.Models
     public class Faculty
     {
         [Key]
-        public int FID { get; set; }
+        public int Id { get; set; }
 
         [Required]
-        public string FacultyName { get; set; }
+        public string Name { get; set; }
 
-        [Range(500, 4000)]
-        public double Salary { get; set; }
+        public string MobileNumber { get; set; }
 
-        public string FDepartment { get; set; }
 
         [ForeignKey("Department")]
-        public int DeptId { get; set; }
+        public int DepartmentId { get; set; }
+
+        public decimal Salary { get; set; }
+
         public virtual Department Department { get; set; }
 
-        public virtual ICollection<student>? Students { get; set; }
-
-        public virtual ICollection<Subject>? Subjects { get; set; }
+        public virtual ICollection<Subject> Subjects { get; set; }
+        public virtual ICollection<Course> Courses { get; set; }
     }
 }
+
 

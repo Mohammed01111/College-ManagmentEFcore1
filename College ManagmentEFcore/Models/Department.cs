@@ -10,15 +10,11 @@ namespace College_ManagmentEFcore.Models
     public class Department
     {
         [Key]
-        public int DeptId { get; set; }
+        public int Id { get; set; }
 
-        [Required]
-        public string DeptName { get; set; }
+        public string DName { get; set; }
 
-        public virtual ICollection<Faculty> Faculties { get; set; }
-
-        public virtual ICollection<Course>? Courses { get; set; }
-
-        public virtual ICollection<Exam>? Exams { get; set; }
+        public virtual ICollection<Course> Courses { get; set; }
+        public virtual ICollection<Exam> Exams { get; set; }
     }
 }

@@ -17,71 +17,56 @@ namespace College_ManagmentEFcore.Repositories
             _context = context;
         }
 
-        // 1. GetAllDepartments: Retrieve all departments, including the courses they handle and exams conducted.
-        public async Task<List<Department>> GetAllDepartmentsAsync()
+        public IEnumerable<Department> GetAllDepartments()
         {
-            return await _context.Departments
-                .Include(d => d.Courses)  // Include courses offered by the department
-                .Include(d => d.Exams)    // Include exams associated with the department
-                .Include(d => d.Faculties) // Include faculties in the department
-                .ToListAsync();
+            return _context.Departments
+                .Include(d => d.Courses)
+                .Include(d => d.Exams)
+                .ToList();
         }
 
-        // 2. GetDepartmentById: Fetch department details by ID with navigational properties.
-        public async Task<Department> GetDepartmentByIdAsync(int deptId)
+        public Department GetDepartmentById(int id)
         {
-            return await _context.Departments
-                .Include(d => d.Courses)   // Include courses in the department
-                .Include(d => d.Exams)     // Include exams in the department
-                .Include(d => d.Faculties) // Include faculties in the department
-                .FirstOrDefaultAsync(d => d.DeptId == deptId);
+            return _context.Departments
+                .Include(d => d.Courses)
+                .Include(d => d.Exams)
+                .FirstOrDefault(d => d.Id == id);
         }
 
-        // 3. AddDepartment: Add a new department.
-        public async Task AddDepartmentAsync(Department department)
+        public void AddDepartment(Department department)
         {
             _context.Departments.Add(department);
-            await _context.SaveChangesAsync();
+            _context.SaveChanges();
         }
 
-        // 4. UpdateDepartment: Update details of an existing department.
-        public async Task UpdateDepartmentAsync(Department department)
+        public void UpdateDepartment(Department department)
         {
             _context.Departments.Update(department);
-            await _context.SaveChangesAsync();
+            _context.SaveChanges();
         }
 
-        // 5. DeleteDepartment: Delete a department by ID.
-        public async Task DeleteDepartmentAsync(int deptId)
+        public void DeleteDepartment(int id)
         {
-            var department = await _context.Departments
-                .Include(d => d.Courses)  // Include courses to check if any courses need to be handled
-                .Include(d => d.Exams)    // Include exams to check if any exams are associated
-                .Include(d => d.Faculties) // Include faculties to ensure integrity
-                .FirstOrDefaultAsync(d => d.DeptId == deptId);
-
+            var department = _context.Departments.Find(id);
             if (department != null)
             {
                 _context.Departments.Remove(department);
-                await _context.SaveChangesAsync();
+                _context.SaveChanges();
             }
         }
 
-        // 6. GetDepartmentsWithCourses: List departments that offer courses using LINQ Join or Include.
-        public async Task<List<Department>> GetDepartmentsWithCoursesAsync()
+        public IEnumerable<Department> GetDepartmentsWithCourses()
         {
-            return await _context.Departments
-                .Where(d => d.Courses.Any())  // Filter departments that offer at least one course
-                .Include(d => d.Courses)      // Include the courses in the department
-                .ToListAsync();
+            return _context.Departments
+                .Where(d => d.Courses.Any())
+                .ToList();
         }
 
-        // 7. GetDepartmentNames: Retrieve just the names of all departments using projection in LINQ.
-        public async Task<List<string>> GetDepartmentNamesAsync()
+        public IEnumerable<string> GetDepartmentNames()
         {
-            return await _context.Departments
-                .Select(d => d.DeptName)  // Select only the department names
-                .ToListAsync();
+            return _context.Departments
+                .Select(d => d.DName)
+                .ToList();
         }
     }
 }

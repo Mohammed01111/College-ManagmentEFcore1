@@ -11,127 +11,76 @@ namespace College_ManagmentEFcore.Repositories
 {
     public class StudentRepository
     {
-        private readonly ApplicationDbContext _context;
-
+        public readonly ApplicationDbContext _context;
         public StudentRepository(ApplicationDbContext context)
         {
             _context = context;
         }
-
-        public async Task<List<student>> GetStudentsByCourseAsync1(int courseId)
+        public IEnumerable<student> GetAllStudents()
         {
-            return await _context.studentCourses
-                .Where(sc => sc.Course_id == courseId)
-                .Include(sc => sc.Student)      // Include the Student entity
-                .ThenInclude(s => s.StudentCourses) // Include the student's enrolled courses (if needed)
-                .Include(sc => sc.Course)       // Include the Course entity
-                .Select(sc => sc.Student)       // Return the student from the join
-                .ToListAsync();
+            return _context.students
+                           .Include(s => s.Courses)
+                           .Include(s => s.Hostel)
+                           .Include(s => s.Exams)
+                           .ToList();
         }
-
-
-        // 2. GetStudentById: Retrieve a student by SID with all related data
-        public async Task<student> GetStudentByIdAsync(int studentId)
+        public student GetStudentById(int id)
         {
-            return await _context.students
-                .Include(s => s.StudentCourses)
-                .ThenInclude(sc => sc.Course)
-                .Include(s => s.Hostel)
-                .Include(s => s.Teacher)
-                .Include(s => s.StudentPhones)
-                .FirstOrDefaultAsync(s => s.SID == studentId);
+            return _context.students
+                           .Include(s => s.Courses)
+                           .Include(s => s.Hostel)
+                           .Include(s => s.Exams)
+                           .FirstOrDefault(s => s.SID == id);
         }
-
-        // 3. AddStudent: Add a new student
-        public async Task AddStudentAsync(student student)
+        public void AddStudent(student student)
         {
             _context.students.Add(student);
-            await _context.SaveChangesAsync();
+            _context.SaveChanges();
         }
-
-        // 4. UpdateStudent: Update existing student information
-        public async Task UpdateStudentAsync(student student)
+        public void UpdateStudent(student student)
         {
             _context.students.Update(student);
-            await _context.SaveChangesAsync();
+            _context.SaveChanges();
         }
-
-        // 5. DeleteStudent: Delete a student by SID and handle related data integrity
-        public async Task DeleteStudentAsync(int studentId)
+        public void DeleteStudent(int id)
         {
-            var student = await _context.students.FindAsync(studentId);
+            var student = _context.students.Find(id);
             if (student != null)
             {
                 _context.students.Remove(student);
-                await _context.SaveChangesAsync();
+                _context.SaveChanges();
             }
         }
-
-        // 6. GetStudentsByCourse: Retrieve all students enrolled in a specific course
-        public async Task<List<student>> GetStudentsByCourseAsync(int courseId)
+        public IEnumerable<student> GetStudentsByCourse(int courseId)
         {
-            return await _context.students
-                .Where(s => s.StudentCourses.Any(sc => sc.Course_id == courseId))
-                .Include(s => s.StudentCourses)
-                .ThenInclude(sc => sc.Course)
-                .Include(s => s.Hostel)
-                .Include(s => s.Teacher)
-                .Include(s => s.StudentPhones)
-                .ToListAsync();
+            return _context.students
+                           .Where(s => s.Courses.Any(c => c.Id == courseId))
+                           .ToList();
         }
-
-        // 7. GetStudentsInHostel: List all students residing in a specific hostel
-        public async Task<List<student>> GetStudentsInHostelAsync(int hostelId)
+        public IEnumerable<student> GetStudentsInHostel(int hostelId)
         {
-            return await _context.students
-                .Where(s => s.Hostel_Id == hostelId)
-                .Include(s => s.StudentCourses)
-                .ThenInclude(sc => sc.Course)
-                .Include(s => s.Hostel)
-                .Include(s => s.Teacher)
-                .Include(s => s.StudentPhones)
-                .ToListAsync();
+            return _context.students
+                           .Where(s => s.HostelId == hostelId)
+                           .ToList();
         }
-
-        // 8. SearchStudents: Search students by name, phone number, or other criteria
-        public async Task<List<student>> SearchStudentsAsync(string searchTerm)
+        public IEnumerable<student> SearchStudents(string searchTerm)
         {
-            return await _context.students
-                .Where(s => s.FName.Contains(searchTerm) || s.LName.Contains(searchTerm) || s.StudentPhones.Any(sp => sp.Phone_no.Contains(searchTerm)))
-                .Include(s => s.StudentCourses)
-                .ThenInclude(sc => sc.Course)
-                .Include(s => s.Hostel)
-                .Include(s => s.Teacher)
-                .Include(s => s.StudentPhones)
-                .ToListAsync();
+            return _context.students
+                           .Where(s => s.SName.Contains(searchTerm) || s.Phone.Contains(searchTerm))
+                           .ToList();
         }
-
-        // 9. GetStudentsWithAgeAbove: Filter students by age
-        public async Task<List<student>> GetStudentsWithAgeAboveAsync(int age)
+        public IEnumerable<student> GetStudentsWithAgeAbove(int age)
         {
-            var today = DateTime.Today;
-            return await _context.students
-                .Where(s => today.Year - s.DOB.Year > age)
-                .Include(s => s.StudentCourses)
-                .ThenInclude(sc => sc.Course)
-                .Include(s => s.Hostel)
-                .Include(s => s.Teacher)
-                .Include(s => s.StudentPhones)
-                .ToListAsync();
+            return _context.students
+                           .Where(s => s.Age > age)
+                           .ToList();
         }
-
-        // 10. PaginateStudents: Implement pagination for students
-        public async Task<List<student>> PaginateStudentsAsync(int pageNumber, int pageSize)
+        public IEnumerable<student> PaginateStudents(int pageNumber, int pageSize)
         {
-            return await _context.students
-                .Include(s => s.StudentCourses)
-                .ThenInclude(sc => sc.Course)
-                .Include(s => s.Hostel)
-                .Include(s => s.Teacher)
-                .Include(s => s.StudentPhones)
-                .Skip((pageNumber - 1) * pageSize)
-                .Take(pageSize)
-                .ToListAsync();
+            return _context.students
+                           .Skip((pageNumber - 1) * pageSize)
+                           .Take(pageSize)
+                           .ToList();
         }
     }
 }

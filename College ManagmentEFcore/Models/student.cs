@@ -14,31 +14,25 @@ namespace College_ManagmentEFcore.Models
         [Key]
         public int SID { get; set; }
 
+        public string SName { get; set; }
         [Required]
-        public string FName { get; set; }
+        public int Age { get; set; }
 
         [Required]
-        public string LName { get; set; }
+        public string Phone { get; set; }
 
-        public string City { get; set; }
-
-        public string State { get; set; }
-
-        public string Pin_code { get; set; }
-
-        public DateTime DOB { get; set; }
+        [ForeignKey("Department")]
+        public int DepartmentId { get; set; }
 
         [ForeignKey("Hostel")]
-        public int? Hostel_Id { get; set; }
+        public int HostelId { get; set; }
+
+        public virtual Department Department { get; set; }
+
         public virtual hostel Hostel { get; set; }
 
-        [ForeignKey("Teacher")]
-        public int FID { get; set; }
-        public virtual Faculty Teacher { get; set; }
-
-        public virtual ICollection<StudentPhone> StudentPhones { get; set; }
-
-        public virtual ICollection<StudentCourse> StudentCourses { get; set; }
+        public virtual ICollection<Course> Courses { get; set; }
+        public virtual ICollection<Exam> Exams { get; set; }
 
 
     }
